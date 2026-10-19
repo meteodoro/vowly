@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Vowly.Api.Models;
 
 namespace Vowly.Api.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<Usuario>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -19,9 +20,17 @@ public class AppDbContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
         modelBuilder.Entity<Casamento>()
             .Property(c => c.OrcamentoTotal)
             .HasPrecision(18, 2);
+        
+        modelBuilder.Entity<Usuario>()
+            .HasOne(u => u.Casamento)
+            .WithOne(c => c.Usuario)
+            .HasForeignKey<Casamento>(c => c.UsuarioId)
+            .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<Despesa>()
             .HasMany(d => d.Parcelas)

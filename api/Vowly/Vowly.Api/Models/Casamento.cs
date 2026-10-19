@@ -9,6 +9,9 @@ public class Casamento
     public string? Cidade { get; set; }
     public decimal OrcamentoTotal { get; set; }
     
+    public string UsuarioId { get; set; } = string.Empty;
+    public Usuario Usuario { get; set; }  = null!;
+    
     public List<Categoria> Categorias { get; set; } = new();
     public List<Fornecedor> Fornecedores { get; set; } = new();
     public List<Despesa> Despesas { get; set; } = new();
