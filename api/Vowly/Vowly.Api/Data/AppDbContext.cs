@@ -17,20 +17,32 @@ public class AppDbContext : IdentityDbContext<Usuario>
     public DbSet<Fornecedor> Fornecedores { get; set; }
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<Tarefa> Tarefas { get; set; }
+    public DbSet<Assinatura> Assinaturas { get; set; }
+    
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
-        modelBuilder.Entity<Casamento>()
-            .Property(c => c.OrcamentoTotal)
-            .HasPrecision(18, 2);
         
         modelBuilder.Entity<Usuario>()
             .HasOne(u => u.Casamento)
             .WithOne(c => c.Usuario)
             .HasForeignKey<Casamento>(c => c.UsuarioId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Casamento>()
+            .Property(c => c.OrcamentoTotal)
+            .HasPrecision(18, 2);
+        
+        modelBuilder.Entity<Usuario>()
+            .HasOne(u => u.Assinatura)
+            .WithOne(a => a.Usuario)
+            .HasForeignKey<Assinatura>(a => a.UsuarioId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Assinatura>()
+            .Property(a => a.ValorMensal)
+            .HasPrecision(18, 2);
         
         modelBuilder.Entity<Despesa>()
             .HasMany(d => d.Parcelas)

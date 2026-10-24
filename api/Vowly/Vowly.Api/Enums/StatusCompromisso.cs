@@ -1,4 +1,4 @@
-﻿namespace Vowly.Api.Api.Enums;
+﻿namespace Vowly.Api.Enums;
 
 public enum StatusCompromisso
 {

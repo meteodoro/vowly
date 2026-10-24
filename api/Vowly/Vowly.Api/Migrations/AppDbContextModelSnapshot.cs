@@ -145,6 +145,40 @@ namespace Vowly.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Vowly.Api.Models.Assinatura", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DataFim")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DataInicio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Plano")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ValorMensal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId")
+                        .IsUnique();
+
+                    b.ToTable("Assinaturas");
+                });
+
             modelBuilder.Entity("Vowly.Api.Models.Casamento", b =>
                 {
                     b.Property<int>("Id")
@@ -490,6 +524,17 @@ namespace Vowly.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Vowly.Api.Models.Assinatura", b =>
+                {
+                    b.HasOne("Vowly.Api.Models.Usuario", "Usuario")
+                        .WithOne("Assinatura")
+                        .HasForeignKey("Vowly.Api.Models.Assinatura", "UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Vowly.Api.Models.Casamento", b =>
                 {
                     b.HasOne("Vowly.Api.Models.Usuario", "Usuario")
@@ -612,6 +657,8 @@ namespace Vowly.Api.Migrations
 
             modelBuilder.Entity("Vowly.Api.Models.Usuario", b =>
                 {
+                    b.Navigation("Assinatura");
+
                     b.Navigation("Casamento");
                 });
 #pragma warning restore 612, 618

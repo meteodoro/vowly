@@ -6,6 +6,7 @@ public class Usuario : IdentityUser
 {
     public string Nome { get; set; } = string.Empty;
     public Casamento? Casamento { get; set; }
+    public Assinatura? Assinatura { get; set; }
     
     
 }

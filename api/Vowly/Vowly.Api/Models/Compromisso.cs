@@ -1,4 +1,4 @@
-﻿using Vowly.Api.Api.Enums;
+﻿using Vowly.Api.Enums;
 
 namespace Vowly.Api.Models;
 
