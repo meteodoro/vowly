@@ -14,6 +14,9 @@ public interface ICasamentoService
 
 public class CasamentoService(AppDbContext context) : ICasamentoService
 {
+    private static readonly string[] CategoriasPadrao =
+        ["Buffet", "Vestido", "Decoração", "Fotografia", "Música", "Local"];
+    
     public async Task<CasamentoRespostaDto?> ObterAsync(string usuarioId)
     {
         var casamento = await context.Casamentos
@@ -40,6 +43,9 @@ public class CasamentoService(AppDbContext context) : ICasamentoService
             OrcamentoTotal = dto.OrcamentoTotal
         };
 
+        foreach (var nome in CategoriasPadrao)
+            casamento.Categorias.Add(new Categoria { Nome = nome });
+        
         context.Casamentos.Add(casamento);
         await context.SaveChangesAsync();
 
