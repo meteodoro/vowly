@@ -51,6 +51,7 @@ public class Program
             });
 
         builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddScoped<ICasamentoService, CasamentoService>();
 
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();

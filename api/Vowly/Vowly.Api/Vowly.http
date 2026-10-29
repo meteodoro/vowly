@@ -1,5 +1,7 @@
 @host = http://localhost:5266
 
+### Registrar usuário
+
 POST {{host}}/api/auth/registrar
 Content-Type: application/json
 
@@ -9,7 +11,7 @@ Content-Type: application/json
   "senha": "senha1234"
 }
 
-###
+### Login
 
 POST {{host}}/api/auth/login
 Content-Type: application/json
@@ -18,3 +20,20 @@ Content-Type: application/json
   "email": "maria@teste.com",
   "senha": "senha1234"
 }
+
+### Criar casamento
+POST http://localhost:5266/api/casamento
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImZlNDUzNjM0LTUzNmMtNGE5ZC05Yzc2LTFlMGQyNDg0MzUwMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im1hcmlhQHRlc3RlLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJNYXJpYSIsImV4cCI6MTc5MzMyMjQ0OCwiaXNzIjoiVm93bHkuQXBpIiwiYXVkIjoiVm93bHkuV2ViIn0.6kuz1LZI6ADi63vyedTJalxWoX7_2UiINZUc8oHc8aE
+Content-Type: application/json
+
+{
+  "nomeNoivo1": "Maria",
+  "nomeNoivo2": "João",
+  "dataPrevista": "2027-06-12",
+  "cidade": "Blumenau",
+  "orcamentoTotal": 0
+}
+
+### Ver casamento
+GET http://localhost:5266/api/casamento
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImZlNDUzNjM0LTUzNmMtNGE5ZC05Yzc2LTFlMGQyNDg0MzUwMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im1hcmlhQHRlc3RlLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJNYXJpYSIsImV4cCI6MTc5MzMyMjQ0OCwiaXNzIjoiVm93bHkuQXBpIiwiYXVkIjoiVm93bHkuV2ViIn0.6kuz1LZI6ADi63vyedTJalxWoX7_2UiINZUc8oHc8aE

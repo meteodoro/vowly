@@ -7,10 +7,15 @@ using Vowly.Api.Models;
 
 namespace Vowly.Api.Services;
 
+public interface ITokenService
+{
+    public AuthRespostaDto GerarToken(Usuario usuario);
+}
+
 public class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
-
+    
     public TokenService(IConfiguration configuration)
     {
         _configuration = configuration;
