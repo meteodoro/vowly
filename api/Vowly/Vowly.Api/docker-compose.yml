@@ -1,0 +1,16 @@
+﻿services:
+  db:
+    image: postgres:16
+    container_name: vowly-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: vowly
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - vowly-data:/var/lib/postgresql/data
+
+volumes:
+  vowly-data:
