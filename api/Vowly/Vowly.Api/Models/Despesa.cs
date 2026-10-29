@@ -1,10 +1,13 @@
-﻿namespace Vowly.Api.Models;
+﻿using Vowly.Api.Enums;
+
+namespace Vowly.Api.Models;
 
 public class Despesa
 {
     public int Id { get; set; }
     public string Descricao { get; set; } = string.Empty;
     public decimal ValorTotal { get; set; }
+    public StatusDespesa Status { get; set; }
     public string? Observacoes { get; set; }
     
     public int CategoriaId { get; set; }
