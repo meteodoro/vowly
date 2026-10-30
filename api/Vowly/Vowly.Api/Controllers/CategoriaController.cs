@@ -10,10 +10,8 @@ namespace Vowly.Api.Controllers;
 [ApiController]
 [Route("api/categorias")]
 [Authorize]
-public class CategoriasController(ICategoriaService categoriaService) : ControllerBase
+public class CategoriasController(ICategoriaService categoriaService) : VowlyControllerBase
 {
-    private string UsuarioId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
     [HttpGet]
     public async Task<IActionResult> Listar()
     {
@@ -41,11 +39,4 @@ public class CategoriasController(ICategoriaService categoriaService) : Controll
         var r = await categoriaService.ExcluirAsync(UsuarioId, id);
         return r.Sucesso ? NoContent() : Erro(r.Erro, r.Mensagem);
     }
-
-    private IActionResult Erro(TipoErro? erro, string? mensagem) => erro switch
-    {
-        TipoErro.NaoEncontrado => NotFound(new { mensagem }),
-        TipoErro.Conflito => Conflict(new { mensagem }),
-        _ => BadRequest(new { mensagem })
-    };
 }

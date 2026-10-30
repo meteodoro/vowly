@@ -9,10 +9,8 @@ namespace Vowly.Api.Controllers;
 [ApiController]
 [Route("api/casamento")]
 [Authorize]
-public class CasamentoController(ICasamentoService casamentoService) : ControllerBase
+public class CasamentoController(ICasamentoService casamentoService) : VowlyControllerBase
 {
-    private string UsuarioId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
     [HttpGet]
     public async Task<IActionResult> Obter()
     {

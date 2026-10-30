@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -53,8 +54,11 @@ public class Program
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<ICasamentoService, CasamentoService>();
         builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+        builder.Services.AddScoped<IDespesaService, DespesaService>();
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(allowIntegerValues: false)));        
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
