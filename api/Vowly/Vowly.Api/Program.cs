@@ -55,6 +55,7 @@ public class Program
         builder.Services.AddScoped<ICasamentoService, CasamentoService>();
         builder.Services.AddScoped<ICategoriaService, CategoriaService>();
         builder.Services.AddScoped<IDespesaService, DespesaService>();
+        builder.Services.AddScoped<IParcelaService, ParcelaService>();
 
         builder.Services.AddControllers()
             .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
