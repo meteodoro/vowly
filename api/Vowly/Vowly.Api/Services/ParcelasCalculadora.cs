@@ -14,6 +14,9 @@ public static class ParcelasCalculadora
 
         // Trunca nos centavos, e a última parcela absorve a diferença
         var valorBase = Math.Round(valorTotal / quantidade, 2, MidpointRounding.ToZero);
+        
+        if (valorBase < 0.01m)
+            throw new ArgumentOutOfRangeException(nameof(quantidade), "O valor total é pequeno demais para essa quantidade de parcelas.");
 
         var parcelas = new List<ParcelaCalculada>(quantidade);
 

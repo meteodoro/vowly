@@ -68,6 +68,9 @@ public class ParcelaService(AppDbContext context) : IParcelaService
             return Resultado<List<ParcelaRespostaDto>>.Falha(TipoErro.Conflito,
                 "Só é possível parcelar uma despesa com status 'a pagar'.");
 
+        if (despesa.ValorTotal < dto.Quantidade * 0.01m)
+            return Resultado<List<ParcelaRespostaDto>>.Falha(TipoErro.Invalido,"O valor da despesa é pequeno demais para essa quantidade de parcelas.");
+        
         var calculadas = ParcelasCalculadora.Gerar(despesa.ValorTotal, dto.Quantidade, dto.PrimeiroVencimento);
 
         var parcelas = calculadas
