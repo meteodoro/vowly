@@ -10,6 +10,7 @@ public interface IParcelaService
 {
     Task<Resultado<List<ParcelaRespostaDto>>> ListarAsync(string usuarioId, int despesaId);
     Task<Resultado<List<ParcelaRespostaDto>>> GerarAsync(string usuarioId, int despesaId, GerarParcelasDto dto);
+    Task<Resultado<ParcelaRespostaDto>> PagarAsync(string usuarioId, int parcelaId, DateOnly? dataPagamento);
 }
 
 public class ParcelaService(AppDbContext context) : IParcelaService
@@ -83,7 +84,6 @@ public class ParcelaService(AppDbContext context) : IParcelaService
         context.Parcelas.AddRange(parcelas);
         despesa.Status = StatusDespesa.EmPagamento;
 
-        // Parcelas e status da despesa são gravados juntos, na mesma transação
         await context.SaveChangesAsync();
 
         return Resultado<List<ParcelaRespostaDto>>.Ok(parcelas.Select(Mapear).ToList());
@@ -105,4 +105,42 @@ public class ParcelaService(AppDbContext context) : IParcelaService
         DataPagamento = p.DataPagamento,
         Paga = p.Paga
     };
+    
+    public async Task<Resultado<ParcelaRespostaDto>> PagarAsync(
+        string usuarioId, int parcelaId, DateOnly? dataPagamento)
+    {
+        var casamentoId = await ObterCasamentoIdAsync(usuarioId);
+        if (casamentoId is null)
+            return Resultado<ParcelaRespostaDto>.Falha(TipoErro.NaoEncontrado, SemCasamento);
+
+        var parcela = await context.Parcelas
+            .Include(p => p.Despesa)
+            .FirstOrDefaultAsync(p => p.Id == parcelaId && p.Despesa.CasamentoId == casamentoId);
+        if (parcela is null)
+            return Resultado<ParcelaRespostaDto>.Falha(TipoErro.NaoEncontrado, "Parcela não encontrada.");
+
+        if (parcela.Paga)
+            return Resultado<ParcelaRespostaDto>.Falha(TipoErro.Conflito, "Esta parcela já foi paga.");
+
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        // Um dia de tolerância, por causa do fuso horário do usuário
+        if (dataPagamento is not null && dataPagamento > hoje.AddDays(1))
+            return Resultado<ParcelaRespostaDto>.Falha(TipoErro.Invalido,
+                "A data de pagamento não pode estar no futuro.");
+
+        parcela.Paga = true;
+        parcela.DataPagamento = dataPagamento ?? hoje;
+
+        // Se não sobrou nenhuma parcela em aberto (além desta), a despesa fica paga
+        var restantes = await context.Parcelas
+            .CountAsync(p => p.DespesaId == parcela.DespesaId && !p.Paga && p.Id != parcela.Id);
+
+        if (restantes == 0)
+            parcela.Despesa.Status = StatusDespesa.Paga;
+
+        await context.SaveChangesAsync();
+
+        return Resultado<ParcelaRespostaDto>.Ok(Mapear(parcela));
+    }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Vowly.Api.Dtos;
 using Vowly.Api.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Vowly.Api.Controllers;
 
@@ -22,5 +23,14 @@ public class ParcelasController(IParcelaService parcelaService) : VowlyControlle
     {
         var r = await parcelaService.GerarAsync(UsuarioId, despesaId, dto);
         return r.Sucesso ? StatusCode(StatusCodes.Status201Created, r.Valor) : Erro(r.Erro, r.Mensagem);
+    }
+    
+    [HttpPost("parcelas/{id:int}/pagar")]
+    public async Task<IActionResult> Pagar(
+        int id,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] PagarParcelaDto? dto)
+    {
+        var r = await parcelaService.PagarAsync(UsuarioId, id, dto?.DataPagamento);
+        return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
     }
 }
