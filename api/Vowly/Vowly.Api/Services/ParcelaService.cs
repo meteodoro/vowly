@@ -11,6 +11,7 @@ public interface IParcelaService
     Task<Resultado<List<ParcelaRespostaDto>>> ListarAsync(string usuarioId, int despesaId);
     Task<Resultado<List<ParcelaRespostaDto>>> GerarAsync(string usuarioId, int despesaId, GerarParcelasDto dto);
     Task<Resultado<ParcelaRespostaDto>> PagarAsync(string usuarioId, int parcelaId, DateOnly? dataPagamento);
+    Task<Resultado<ParcelasPendentesRespostaDto>> ListarPendentesAsync(string usuarioId, int dias);
 }
 
 public class ParcelaService(AppDbContext context) : IParcelaService
@@ -109,8 +110,7 @@ public class ParcelaService(AppDbContext context) : IParcelaService
         Paga = p.Paga
     };
     
-    public async Task<Resultado<ParcelaRespostaDto>> PagarAsync(
-        string usuarioId, int parcelaId, DateOnly? dataPagamento)
+    public async Task<Resultado<ParcelaRespostaDto>> PagarAsync(string usuarioId, int parcelaId, DateOnly? dataPagamento)
     {
         var casamentoId = await ObterCasamentoIdAsync(usuarioId);
         if (casamentoId is null)
@@ -125,8 +125,8 @@ public class ParcelaService(AppDbContext context) : IParcelaService
         if (parcela.Paga)
             return Resultado<ParcelaRespostaDto>.Falha(TipoErro.Conflito, "Esta parcela já foi paga.");
 
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
-
+        var hoje = DataLocal.Hoje();
+        
         // Um dia de tolerância, por causa do fuso horário do usuário
         if (dataPagamento is not null && dataPagamento > hoje.AddDays(1))
             return Resultado<ParcelaRespostaDto>.Falha(TipoErro.Invalido,
@@ -145,5 +145,62 @@ public class ParcelaService(AppDbContext context) : IParcelaService
         await context.SaveChangesAsync();
 
         return Resultado<ParcelaRespostaDto>.Ok(Mapear(parcela));
+    }
+    
+    public async Task<Resultado<ParcelasPendentesRespostaDto>> ListarPendentesAsync(string usuarioId, int dias)
+    {
+        var casamentoId = await ObterCasamentoIdAsync(usuarioId);
+        if (casamentoId is null)
+            return Resultado<ParcelasPendentesRespostaDto>.Falha(TipoErro.NaoEncontrado, SemCasamento);
+
+        var hoje = DataLocal.Hoje();
+        var limite = hoje.AddDays(dias);
+
+        // Traz todas as atrasadas (vencimento antes de hoje) e as que vencem dentro da janela
+        var pendentes = await context.Parcelas
+            .AsNoTracking()
+            .Where(p => p.Despesa.CasamentoId == casamentoId && !p.Paga && p.DataVencimento <= limite)
+            .OrderBy(p => p.DataVencimento).ThenBy(p => p.DespesaId).ThenBy(p => p.Numero)
+            .Select(p => new
+            {
+                p.Id,
+                p.DespesaId,
+                Descricao = p.Despesa.Descricao,
+                Categoria = p.Despesa.Categoria.Nome,
+                p.Numero,
+                Total = p.Despesa.Parcelas.Count,
+                p.Valor,
+                p.DataVencimento
+            })
+            .ToListAsync();
+
+        var itens = pendentes
+            .Select(p => new ParcelaPendenteDto
+            {
+                ParcelaId = p.Id,
+                DespesaId = p.DespesaId,
+                DespesaDescricao = p.Descricao,
+                CategoriaNome = p.Categoria,
+                Numero = p.Numero,
+                TotalParcelas = p.Total,
+                Valor = p.Valor,
+                DataVencimento = p.DataVencimento,
+                Situacao = ParcelaRegras.Classificar(p.DataVencimento, hoje),
+                DiasParaVencer = ParcelaRegras.DiasParaVencer(p.DataVencimento, hoje)
+            })
+            .ToList();
+
+        var atrasadas = itens.Where(i => i.Situacao == SituacaoParcela.Atrasada).ToList();
+        var aVencer = itens.Where(i => i.Situacao == SituacaoParcela.AVencer).ToList();
+
+        return Resultado<ParcelasPendentesRespostaDto>.Ok(new ParcelasPendentesRespostaDto
+        {
+            Hoje = hoje,
+            JanelaDias = dias,
+            Atrasadas = atrasadas,
+            AVencer = aVencer,
+            TotalAtrasado = atrasadas.Sum(i => i.Valor),
+            TotalAVencer = aVencer.Sum(i => i.Valor)
+        });
     }
 }
