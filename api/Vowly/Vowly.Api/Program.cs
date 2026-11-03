@@ -58,6 +58,7 @@ public class Program
         builder.Services.AddScoped<IParcelaService, ParcelaService>();
         builder.Services.AddScoped<IAssinaturaService, AssinaturaService>();
         builder.Services.AddScoped<IResumoFinanceiroService, ResumoFinanceiroService>();
+        builder.Services.AddScoped<ICompromissoService, CompromissoService>();
         
         builder.Services.Configure<OpcoesPlano>(builder.Configuration.GetSection(OpcoesPlano.Secao));
         

@@ -169,3 +169,39 @@ Authorization: Bearer {{token}}
 ### Resumo do dashboard
 GET http://localhost:5266/api/dashboard/resumo
 Authorization: Bearer {{token}}
+
+### Criar compromisso (sem fuso: considera Brasília)
+POST http://localhost:5266/api/compromissos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Prova do vestido",
+  "tipo": "Prova",
+  "dataHora": "2026-12-05T15:00:00",
+  "local": "Ateliê da Ana"
+}
+
+### Compromisso já passado (atraso)
+POST http://localhost:5266/api/compromissos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Degustação do buffet",
+  "tipo": "Degustação",
+  "dataHora": "2026-10-20T14:00:00Z",
+  "status": "Concluido"
+}
+
+### Listar compromissos (opcionalmente ?status=Pendente)
+GET http://localhost:5266/api/compromissos?status=Pendente
+Authorization: Bearer {{token}}
+
+### Buscar compromisso por Id
+GET http://localhost:5266/api/compromissos/2
+Authorization: Bearer {{token}}
+
+### Excluir compromisso
+DELETE http://localhost:5266/api/compromissos/2
+Authorization: Bearer {{token}}
