@@ -35,12 +35,25 @@ Content-Type: application/json
   "nomeNoivo2": "João",
   "dataPrevista": "2027-06-12",
   "cidade": "Blumenau",
-  "orcamentoTotal": 50000
+  "orcamentoTotal": 60000
 }
 
 ### Ver casamento
 GET http://localhost:5266/api/casamento
 Authorization: Bearer {{token}}
+
+### Editar casamento
+PUT http://localhost:5266/api/casamento/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nomeNoivo1": "Maria",
+  "nomeNoivo2": "João",
+  "dataPrevista": "2027-06-12",
+  "cidade": "Blumenau",
+  "orcamentoTotal": 60000
+}
 
 ### Listar categorias
 GET http://localhost:5266/api/categorias
@@ -71,7 +84,7 @@ Content-Type: application/json
 
 {
   "descricao": "Buffet - entrada",
-  "valorTotal": 8000,
+  "valorTotal": 12000,
   "categoriaId": 3,
   "status": "APagar"
 }
@@ -80,7 +93,7 @@ Content-Type: application/json
 GET http://localhost:5266/api/despesas?categoriaId=1&status=APagar
 Authorization: Bearer {{token}}
 
-### Editar
+### Editar despesa
 PUT http://localhost:5266/api/despesas/3
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -93,11 +106,11 @@ Content-Type: application/json
 }
 
 ### Excluir
-DELETE http://localhost:5266/api/despesas/1
+DELETE http://localhost:5266/api/despesas/8
 Authorization: Bearer {{token}}
 
 ### Parcelar em 3x
-POST http://localhost:5266/api/despesas/4/parcelas
+POST http://localhost:5266/api/despesas/10/parcelas
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -107,7 +120,7 @@ Content-Type: application/json
 }
 
 ### Ver parcelas
-GET http://localhost:5266/api/despesas/4/parcelas
+GET http://localhost:5266/api/despesas/10/parcelas
 Authorization: Bearer {{token}}
 
 ### Ver a despesa
@@ -115,7 +128,7 @@ GET http://localhost:5266/api/despesas/4
 Authorization: Bearer {{token}}
 
 ### Pagar parcela (data de hoje)
-POST http://localhost:5266/api/parcelas/7/pagar
+POST http://localhost:5266/api/parcelas/13/pagar
 Authorization: Bearer {{token}}
 
 ### Pagar parcela com data
@@ -135,4 +148,8 @@ Authorization: Bearer {{token}}
 
 ### Cancelar
 POST http://localhost:5266/api/assinatura/cancelar
+Authorization: Bearer {{token}}
+
+### Resumo do dashboard
+GET http://localhost:5266/api/dashboard/resumo
 Authorization: Bearer {{token}}
