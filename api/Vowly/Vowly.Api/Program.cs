@@ -56,6 +56,7 @@ public class Program
         builder.Services.AddScoped<ICategoriaService, CategoriaService>();
         builder.Services.AddScoped<IDespesaService, DespesaService>();
         builder.Services.AddScoped<IParcelaService, ParcelaService>();
+        builder.Services.Configure<OpcoesPlano>(builder.Configuration.GetSection(OpcoesPlano.Secao));
 
         builder.Services.AddControllers()
             .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(

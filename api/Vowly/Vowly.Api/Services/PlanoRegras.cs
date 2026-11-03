@@ -12,9 +12,9 @@ public static class PlanoRegras
         return assinatura is not null && assinatura.Plano == TipoPlano.Premium && assinatura.DataFim > agoraUtc;
     }
 
-    public static bool PodeCadastrarDespesa(Assinatura? assinatura, int quantidadeAtual, DateTime agoraUtc)
+    public static bool PodeCadastrarDespesa(Assinatura? assinatura, int quantidadeAtual, DateTime agoraUtc, int limite = LimiteDespesasGratuito)
     {
-        return PremiumAtivo(assinatura, agoraUtc) || quantidadeAtual < LimiteDespesasGratuito;
+        return PremiumAtivo(assinatura, agoraUtc) || quantidadeAtual < limite;
     }
 }
 

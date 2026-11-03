@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Vowly.Api.Data;
 using Vowly.Api.Dtos;
 using Vowly.Api.Enums;
@@ -16,7 +17,7 @@ public interface IDespesaService
     Task<Resultado<bool>> ExcluirAsync(string usuarioId, int id);
 }
 
-public class DespesaService(AppDbContext context) : IDespesaService
+public class DespesaService(AppDbContext context, IOptions<OpcoesPlano> opcoesPlano) : IDespesaService
 {
     private const string SemCasamento = "Cadastre o casamento antes de usar as despesas.";
     private const string StatusAutomatico = "O status 'em pagamento' é definido automaticamente quando a despesa é parcelada.";
@@ -84,8 +85,19 @@ public class DespesaService(AppDbContext context) : IDespesaService
         if (erroReferencia is not null)
             return Resultado<DespesaRespostaDto>.Falha(TipoErro.Invalido, erroReferencia);
 
-        // RN01 (limite de 20 despesas do plano gratuito) entra aqui, na tarefa 8.
+        // RN01: limite de despesas do plano gratuito
+        var limite = opcoesPlano.Value.LimiteDespesasGratuito;
 
+        var assinatura = await context.Assinaturas
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.UsuarioId == usuarioId);
+
+        var quantidadeAtual = await context.Despesas
+            .CountAsync(d => d.CasamentoId == casamentoId);
+
+        if (!PlanoRegras.PodeCadastrarDespesa(assinatura, quantidadeAtual, DateTime.UtcNow, limite))
+            return Resultado<DespesaRespostaDto>.Falha(TipoErro.Conflito, $"O plano gratuito permite até {limite} despesas. Assine o Premium para cadastrar mais.");
+        
         var despesa = new Despesa
         {
             CasamentoId = casamentoId.Value,
