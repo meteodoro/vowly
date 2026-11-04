@@ -176,10 +176,12 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "titulo": "Prova do vestido",
-  "tipo": "Prova",
-  "dataHora": "2026-12-05T15:00:00",
-  "local": "Ateliê da Ana"
+  "titulo": "F",
+  "tipo": "F",
+  "dataHora": "2026-11-02T15:00:00",
+  "local": "Ateliê da Ana",
+  "status": "Concluido",
+  "antecedenciaLembreteDias": "30"
 }
 
 ### Compromisso já passado (atraso)
@@ -204,4 +206,8 @@ Authorization: Bearer {{token}}
 
 ### Excluir compromisso
 DELETE http://localhost:5266/api/compromissos/2
+Authorization: Bearer {{token}}
+
+### Lembretes
+GET http://localhost:5266/api/compromissos/lembretes
 Authorization: Bearer {{token}}

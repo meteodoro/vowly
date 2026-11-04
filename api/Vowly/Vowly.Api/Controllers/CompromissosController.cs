@@ -24,6 +24,13 @@ public class CompromissosController(ICompromissoService compromissoService) : Vo
         var r = await compromissoService.ObterAsync(UsuarioId, id);
         return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
     }
+    
+    [HttpGet("lembretes")]
+    public async Task<IActionResult> Lembretes()
+    {
+        var r = await compromissoService.ListarLembretesAsync(UsuarioId);
+        return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
+    }
 
     [HttpPost]
     public async Task<IActionResult> Criar(SalvarCompromissoDto dto)

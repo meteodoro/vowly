@@ -14,4 +14,7 @@ public static class DataLocal
         // sem fuso informado: considera horário de Brasília
         _ => DateTime.SpecifyKind(dataHora.AddHours(-DeslocamentoHoras), DateTimeKind.Utc)
     };
+    
+    public static DateOnly DataLocalDe(DateTime dataHoraUtc) =>
+        DateOnly.FromDateTime(dataHoraUtc.AddHours(DeslocamentoHoras));
 }

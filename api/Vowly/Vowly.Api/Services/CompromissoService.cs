@@ -13,6 +13,7 @@ public interface ICompromissoService
     Task<Resultado<CompromissoRespostaDto>> CriarAsync(string usuarioId, SalvarCompromissoDto dto);
     Task<Resultado<CompromissoRespostaDto>> AtualizarAsync(string usuarioId, int id, SalvarCompromissoDto dto);
     Task<Resultado<bool>> ExcluirAsync(string usuarioId, int id);
+    Task<Resultado<LembretesRespostaDto>> ListarLembretesAsync(string usuarioId);
 }
 
 public class CompromissoService(AppDbContext context) : ICompromissoService
@@ -104,6 +105,42 @@ public class CompromissoService(AppDbContext context) : ICompromissoService
         await context.SaveChangesAsync();
 
         return Resultado<bool>.Ok(true);
+    }
+    
+    public async Task<Resultado<LembretesRespostaDto>> ListarLembretesAsync(string usuarioId)
+    {
+        var casamentoId = await ObterCasamentoIdAsync(usuarioId);
+        if (casamentoId is null)
+            return Resultado<LembretesRespostaDto>.Falha(TipoErro.NaoEncontrado, SemCasamento);
+
+        var agora = DateTime.UtcNow;
+
+        // A antecedência máxima é 90 dias
+        var limiteConsulta = agora.AddDays(91);
+
+        var pendentes = await context.Compromissos
+            .AsNoTracking()
+            .Where(c => c.CasamentoId == casamentoId
+                        && c.Status == StatusCompromisso.Pendente
+                        && c.DataHora <= limiteConsulta)
+            .OrderBy(c => c.DataHora)
+            .ToListAsync();
+
+        var atrasados = pendentes
+            .Where(c => CompromissoRegras.Atrasado(c.Status, c.DataHora, agora))
+            .Select(c => Mapear(c, agora))
+            .ToList();
+
+        var proximos = pendentes
+            .Where(c => CompromissoRegras.DeveLembrar(c.Status, c.DataHora, c.AntecedenciaLembreteDias, agora))
+            .Select(c => Mapear(c, agora))
+            .ToList();
+
+        return Resultado<LembretesRespostaDto>.Ok(new LembretesRespostaDto
+        {
+            Atrasados = atrasados,
+            Proximos = proximos
+        });
     }
 
     private Task<int?> ObterCasamentoIdAsync(string usuarioId) =>
