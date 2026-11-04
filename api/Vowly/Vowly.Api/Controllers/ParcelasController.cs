@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Vowly.Api.Dtos;
 using Vowly.Api.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -9,8 +8,7 @@ namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api")]
-[Authorize]
-public class ParcelasController(IParcelaService parcelaService) : VowlyControllerBase
+public class ParcelasController(IParcelaService parcelaService) : CasalControllerBase
 {
     [HttpGet("despesas/{despesaId:int}/parcelas")]
     public async Task<IActionResult> Listar(int despesaId)

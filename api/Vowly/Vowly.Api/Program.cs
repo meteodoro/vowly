@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Vowly.Api.Data;
@@ -11,7 +12,7 @@ namespace Vowly.Api;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ public class Program
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>();
 
         var chaveJwt = builder.Configuration["Jwt:Key"]
@@ -69,6 +71,8 @@ public class Program
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
+        
+        await IdentitySeeder.SemearAsync(app.Services, app.Configuration);
 
         if (app.Environment.IsDevelopment())
         {

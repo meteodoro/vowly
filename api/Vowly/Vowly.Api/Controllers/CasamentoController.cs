@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Vowly.Api.Dtos;
 using Vowly.Api.Services;
 
@@ -8,8 +6,7 @@ namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/casamento")]
-[Authorize]
-public class CasamentoController(ICasamentoService casamentoService) : VowlyControllerBase
+public class CasamentoController(ICasamentoService casamentoService) : CasalControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Obter()

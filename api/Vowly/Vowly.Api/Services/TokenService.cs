@@ -9,7 +9,7 @@ namespace Vowly.Api.Services;
 
 public interface ITokenService
 {
-    public AuthRespostaDto GerarToken(Usuario usuario);
+    public AuthRespostaDto GerarToken(Usuario usuario, IEnumerable<string> perfis);
 }
 
 public class TokenService : ITokenService
@@ -21,8 +21,10 @@ public class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public AuthRespostaDto GerarToken(Usuario usuario)
+    public AuthRespostaDto GerarToken(Usuario usuario, IEnumerable<string> perfis)
     {
+        var listaPerfis = perfis.ToList();
+
         var chave = _configuration["Jwt:Key"]
                     ?? throw new InvalidOperationException("Jwt:Key não configurada. Use dotnet user-secrets.");
         var issuer = _configuration["Jwt:Issuer"];
@@ -36,9 +38,10 @@ public class TokenService : ITokenService
             new(ClaimTypes.Name, usuario.Nome)
         };
         
+        claims.AddRange(listaPerfis.Select(p => new Claim(ClaimTypes.Role, p)));
+        
         var chaveSecreta = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chave));
         var credenciais = new SigningCredentials(chaveSecreta, SecurityAlgorithms.HmacSha256);
-        
         var expiracao = DateTime.UtcNow.AddMinutes(minutos);
         
         var token = new JwtSecurityToken(
@@ -54,7 +57,8 @@ public class TokenService : ITokenService
         {
             Token = tokenTexto,
             ExpiraEm = expiracao,
-            Nome = usuario.Nome
+            Nome = usuario.Nome,
+            Perfil = listaPerfis.FirstOrDefault() ?? string.Empty
         };
     }
     

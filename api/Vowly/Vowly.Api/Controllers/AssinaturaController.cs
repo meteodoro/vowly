@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Vowly.Api.Services;
 
 namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/assinatura")]
-[Authorize]
-public class AssinaturaController(IAssinaturaService assinaturaService) : VowlyControllerBase
+public class AssinaturaController(IAssinaturaService assinaturaService) : CasalControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Obter() =>

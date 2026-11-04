@@ -8,8 +8,7 @@ namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/compromissos")]
-[Authorize]
-public class CompromissosController(ICompromissoService compromissoService) : VowlyControllerBase
+public class CompromissosController(ICompromissoService compromissoService) : CasalControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Listar([FromQuery] StatusCompromisso? status)

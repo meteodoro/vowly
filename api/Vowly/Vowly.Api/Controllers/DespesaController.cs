@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Vowly.Api.Dtos;
 using Vowly.Api.Enums;
 using Vowly.Api.Services;
@@ -8,8 +7,7 @@ namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/despesas")]
-[Authorize]
-public class DespesasController(IDespesaService despesaService) : VowlyControllerBase
+public class DespesasController(IDespesaService despesaService) : CasalControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Listar([FromQuery] int? categoriaId, [FromQuery] StatusDespesa? status)

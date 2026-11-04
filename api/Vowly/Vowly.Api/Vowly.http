@@ -1,24 +1,16 @@
 @host = http://localhost:5266
 
 ### Registrar usuário
-
 POST {{host}}/api/auth/registrar
 Content-Type: application/json
 
-{
-  "nome": "Maria",
-  "email": "maria@teste.com",
-  "senha": "senha1234"
-}
+{ "nome": "Maria", "email": "maria@teste.com", "senha": "senha1234" }
 
 ### Login
-
 POST {{host}}/api/auth/login
 Content-Type: application/json
 
-{
-  "email": "maria@teste.com",
-  "senha": "senha1234"
+{ "email": "maria@teste.com", "senha": "senha1234"
 }
 
 > {%
@@ -211,3 +203,50 @@ Authorization: Bearer {{token}}
 ### Lembretes
 GET http://localhost:5266/api/compromissos/lembretes
 Authorization: Bearer {{token}}
+
+
+
+### Login da Maria (Casal)
+POST http://localhost:5266/api/auth/login
+Content-Type: application/json
+
+{ "email": "maria@teste.com", "senha": "senha1234" }
+
+> {%
+    client.global.set("token", response.body.token);
+%}
+
+### Login do Admin
+POST http://localhost:5266/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@vowly.com", "senha": "admin54321" }
+
+> {%
+    client.global.set("tokenAdmin", response.body.token);
+%}
+
+### Casal acessando rota do casal
+GET http://localhost:5266/api/casamento
+Authorization: Bearer {{token}}
+
+### Admin acessando rota do casal
+GET http://localhost:5266/api/despesas
+Authorization: Bearer {{tokenAdmin}}
+
+### Admin na rota do Admin
+GET http://localhost:5266/api/admin/relatorio/teste
+Authorization: Bearer {{tokenAdmin}}
+
+### Casal na rota do Admin
+GET http://localhost:5266/api/admin/relatorio/teste
+Authorization: Bearer {{token}}
+
+### Sem login na rota do Admin
+GET http://localhost:5266/api/admin/relatorio/teste
+
+### Tentar se registrar como Admin
+POST http://localhost:5266/api/auth/registrar
+Content-Type: application/json
+
+{ "nome": "Teste", "email": "teste@teste.com", "senha": "SenhaTeste123", "perfil": "Admin" }

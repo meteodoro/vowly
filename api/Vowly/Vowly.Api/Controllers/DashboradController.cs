@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Vowly.Api.Services;
 
 namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/dashboard")]
-[Authorize]
-public class DashboardController(IResumoFinanceiroService resumoService) : VowlyControllerBase
+public class DashboardController(IResumoFinanceiroService resumoService) : CasalControllerBase
 {
     [HttpGet("resumo")]
     public async Task<IActionResult> Resumo()

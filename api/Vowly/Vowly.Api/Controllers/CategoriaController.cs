@@ -1,16 +1,12 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Vowly.Api.Dtos;
-using Vowly.Api.Enums;
 using Vowly.Api.Services;
 
 namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/categorias")]
-[Authorize]
-public class CategoriasController(ICategoriaService categoriaService) : VowlyControllerBase
+public class CategoriasController(ICategoriaService categoriaService) : CasalControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Listar()

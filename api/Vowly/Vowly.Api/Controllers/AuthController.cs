@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Vowly.Api.Dtos;
+using Vowly.Api.Enums;
 using Vowly.Api.Models;
 using Vowly.Api.Services;
 
@@ -25,7 +26,15 @@ public class AuthController(UserManager<Usuario> userManager, ITokenService toke
         if (!resultado.Succeeded)
             return BadRequest(resultado.Errors.Select(e => e.Description));
 
-        return Ok(tokenService.GerarToken(usuario));
+        var perfilResultado = await userManager.AddToRoleAsync(usuario, Perfis.Casal);
+        if (!perfilResultado.Succeeded)
+        {
+            // Não deixa um usuário sem perfil no banco
+            await userManager.DeleteAsync(usuario);
+            return StatusCode(500, new { mensagem = "Não foi possível concluir o cadastro. Tente novamente." });
+        }
+
+        return Ok(tokenService.GerarToken(usuario, [Perfis.Casal]));
     }
 
     [HttpPost("login")]
@@ -36,6 +45,8 @@ public class AuthController(UserManager<Usuario> userManager, ITokenService toke
         if (usuario is null || !await userManager.CheckPasswordAsync(usuario, dto.Senha))
             return Unauthorized(new { mensagem = "E-mail ou senha inválidos." });
 
-        return Ok(tokenService.GerarToken(usuario));
+        var perfis = await userManager.GetRolesAsync(usuario);
+        return Ok(tokenService.GerarToken(usuario, perfis));
+        
     }
 }
