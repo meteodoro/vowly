@@ -92,7 +92,7 @@ Content-Type: application/json
 
 {
   "descricao": "Buffet - entrada",
-  "valorTotal": 12000,
+  "valorTotal": 1200,
   "categoriaId": 3,
   "status": "APagar"
 }

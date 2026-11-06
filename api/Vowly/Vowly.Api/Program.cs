@@ -2,9 +2,12 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Vowly.Api.Data;
+using Vowly.Api.Dtos;
+using Vowly.Api.Middleware;
 using Vowly.Api.Models;
 using Vowly.Api.Services;
 
@@ -67,15 +70,45 @@ public class Program
         builder.Services.AddScoped<ICompromissoService, CompromissoService>();
         builder.Services.AddScoped<IRelatorioEmpresaService, RelatorioEmpresaService>();
         
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+        
 
         builder.Services.AddControllers()
             .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
-                new JsonStringEnumConverter(allowIntegerValues: false)));        
+                new JsonStringEnumConverter(allowIntegerValues: false)));    
+        
+        builder.Services.AddControllers()
+            .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter(allowIntegerValues: false)))
+            .ConfigureApiBehaviorOptions(o =>
+                o.InvalidModelStateResponseFactory = contexto =>
+                    new BadRequestObjectResult(ErrosDeValidacao.Montar(contexto.ModelState)));
+        
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
         
         await IdentitySeeder.SemearAsync(app.Services, app.Configuration);
+        
+        app.UseExceptionHandler();
+
+        app.UseStatusCodePages(async contexto =>
+        {
+            var resposta = contexto.HttpContext.Response;
+
+            var mensagem = resposta.StatusCode switch
+            {
+                StatusCodes.Status401Unauthorized => "Você precisa entrar para acessar este recurso.",
+                StatusCodes.Status403Forbidden => "Você não tem permissão para acessar este recurso.",
+                StatusCodes.Status404NotFound => "Rota não encontrada.",
+                StatusCodes.Status405MethodNotAllowed => "Método HTTP não permitido para esta rota.",
+                StatusCodes.Status415UnsupportedMediaType => "Tipo de conteúdo não suportado. Envie o corpo em JSON.",
+                _ => "Não foi possível processar a requisição."
+            };
+
+            await resposta.WriteAsJsonAsync(new ErroRespostaDto { Mensagem = mensagem });
+        });
 
         if (app.Environment.IsDevelopment())
         {
