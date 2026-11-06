@@ -49,6 +49,13 @@ public class AssinaturaService(AppDbContext context, IOptions<OpcoesPlano> opcoe
             assinatura.DataInicio = agora;
             assinatura.DataFim = agora.AddMonths(1);
             assinatura.ValorMensal = opcoesPlano.Value.PrecoPremium;
+            
+            context.Cobrancas.Add(new Cobranca
+            {
+                UsuarioId = usuarioId,
+                DataCobranca = agora,
+                Valor = opcoesPlano.Value.PrecoPremium
+            });
         }
 
         await context.SaveChangesAsync();

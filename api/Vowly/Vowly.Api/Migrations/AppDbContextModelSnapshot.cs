@@ -253,6 +253,32 @@ namespace Vowly.Api.Migrations
                     b.ToTable("Categorias");
                 });
 
+            modelBuilder.Entity("Vowly.Api.Models.Cobranca", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataCobranca")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Valor")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Cobrancas");
+                });
+
             modelBuilder.Entity("Vowly.Api.Models.Compromisso", b =>
                 {
                     b.Property<int>("Id")
@@ -583,6 +609,17 @@ namespace Vowly.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Casamento");
+                });
+
+            modelBuilder.Entity("Vowly.Api.Models.Cobranca", b =>
+                {
+                    b.HasOne("Vowly.Api.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Vowly.Api.Models.Compromisso", b =>

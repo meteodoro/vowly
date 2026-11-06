@@ -53,6 +53,10 @@ public class Program
                 };
             });
 
+        builder.Services.Configure<OpcoesPlano>(builder.Configuration.GetSection(OpcoesPlano.Secao));
+        builder.Services.Configure<OpcoesEmpresa>(builder.Configuration.GetSection(OpcoesEmpresa.Secao));
+
+
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<ICasamentoService, CasamentoService>();
         builder.Services.AddScoped<ICategoriaService, CategoriaService>();
@@ -61,8 +65,7 @@ public class Program
         builder.Services.AddScoped<IAssinaturaService, AssinaturaService>();
         builder.Services.AddScoped<IResumoFinanceiroService, ResumoFinanceiroService>();
         builder.Services.AddScoped<ICompromissoService, CompromissoService>();
-        
-        builder.Services.Configure<OpcoesPlano>(builder.Configuration.GetSection(OpcoesPlano.Secao));
+        builder.Services.AddScoped<IRelatorioEmpresaService, RelatorioEmpresaService>();
         
 
         builder.Services.AddControllers()

@@ -18,6 +18,7 @@ public class AppDbContext : IdentityDbContext<Usuario>
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<Tarefa> Tarefas { get; set; }
     public DbSet<Assinatura> Assinaturas { get; set; }
+    public DbSet<Cobranca> Cobrancas { get; set; }
     
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -69,6 +70,10 @@ public class AppDbContext : IdentityDbContext<Usuario>
             .WithOne(d => d.Fornecedor)
             .HasForeignKey(d => d.FornecedorId)
             .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<Cobranca>()
+            .Property(c => c.Valor)
+            .HasPrecision(18, 2);
     }
 
 }

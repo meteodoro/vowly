@@ -250,3 +250,7 @@ POST http://localhost:5266/api/auth/registrar
 Content-Type: application/json
 
 { "nome": "Teste", "email": "teste@teste.com", "senha": "SenhaTeste123", "perfil": "Admin" }
+
+### Relatório da empresa
+GET http://localhost:5266/api/admin/relatorio?meses=3
+Authorization: Bearer {{tokenAdmin}}

@@ -17,4 +17,7 @@ public static class DataLocal
     
     public static DateOnly DataLocalDe(DateTime dataHoraUtc) =>
         DateOnly.FromDateTime(dataHoraUtc.AddHours(DeslocamentoHoras));
+    
+    public static DateTime InicioDoDiaUtc(DateOnly dia) =>
+        dia.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-DeslocamentoHoras);
 }
