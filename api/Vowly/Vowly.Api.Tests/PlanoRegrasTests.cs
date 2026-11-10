@@ -151,4 +151,37 @@ public class PlanoRegrasTests
         //Assert
         Assert.False(resultado);
     }
+    
+    [Fact]
+    public void PlanoGratuito_AbaixoDoLimite_PodeCadastrarDespesa()
+    {
+        var assinatura = new Assinatura { Plano = TipoPlano.Gratuito, Status = StatusAssinatura.Ativa };
+
+        Assert.True(PlanoRegras.PodeCadastrarDespesa(assinatura, 19, _agoraUtc));
+    }
+
+    [Theory]
+    [InlineData(20)]
+    [InlineData(21)]
+    public void PlanoPremiumAtivo_NoLimiteOuAcima_PodeCadastrarDespesa(int quantidadeAtual)
+    {
+        var assinatura = new Assinatura
+        {
+            Plano = TipoPlano.Premium,
+            Status = StatusAssinatura.Ativa,
+            DataFim = _agoraUtc.AddMonths(1)
+        };
+
+        Assert.True(PlanoRegras.PodeCadastrarDespesa(assinatura, quantidadeAtual, _agoraUtc));
+    }
+
+    [Theory]
+    [InlineData(4, true)]
+    [InlineData(5, false)]
+    public void LimiteConfigurado_EhRespeitado(int quantidadeAtual, bool esperado)
+    {
+        var resultado = PlanoRegras.PodeCadastrarDespesa(null, quantidadeAtual, _agoraUtc, limite: 5);
+
+        Assert.Equal(esperado, resultado);
+    }
 }
