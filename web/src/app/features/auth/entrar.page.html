@@ -1,0 +1,23 @@
+﻿<main class="flex min-h-screen items-center justify-center p-6">
+  <form (submit)="entrar($event)" class="w-full max-w-sm space-y-4 rounded-2xl border border-bege bg-areia p-8">
+    <h1 class="text-center text-3xl text-dourado">Vowly</h1>
+
+    <label class="block text-sm">
+      E-mail
+      <input type="email" autocomplete="email" [value]="email()" (input)="email.set(valor($event))" class="mt-1 w-full rounded-xl border border-bege bg-creme px-3 py-2"/>
+    </label>
+
+    <label class="block text-sm">
+      Senha
+      <input type="password" autocomplete="current-password" [value]="senha()" (input)="senha.set(valor($event))" class="mt-1 w-full rounded-xl border border-bege bg-creme px-3 py-2"/>
+    </label>
+
+    @if (erro()) {
+      <p class="text-sm text-atrasado" role="alert">{{ erro() }}</p>
+    }
+
+    <button type="submit" [disabled]="carregando()" class="w-full rounded-full bg-dourado px-4 py-2 text-white transition hover:opacity-90 disabled:opacity-50">
+      {{ carregando() ? 'Entrando...' : 'Entrar' }}
+    </button>
+  </form>
+</main>

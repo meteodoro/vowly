@@ -1,0 +1,23 @@
+﻿<div class="flex min-h-screen">
+  <aside class="flex w-60 shrink-0 flex-col border-r border-bege bg-areia p-6">
+    <p class="mb-8 font-titulo text-2xl text-dourado">Vowly</p>
+    <nav class="flex flex-col gap-1">
+      @for (item of itens; track item.rota) {
+        <a [routerLink]="item.rota" routerLinkActive="bg-creme text-dourado" class="rounded-xl px-4 py-2 transition hover:bg-creme">
+          {{ item.rotulo }}
+        </a>
+      }
+    </nav>
+
+    <div class="mt-auto">
+      <p class="mb-2 text-sm text-greige">{{ auth.sessao()?.nome }}</p>
+      <button type="button" (click)="auth.sair()" class="w-full rounded-full border border-dourado px-4 py-2 text-dourado transition hover:bg-dourado hover:text-white">
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <main class="flex-1 p-8">
+    <router-outlet />
+  </main>
+</div>
