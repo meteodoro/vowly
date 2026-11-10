@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-creme: #FAF8F5;
+  --color-areia: #EDE6DD;
+  --color-bege: #D8C9B3;
+  --color-greige: #A89B83;
+  --color-carvao: #4A4744;
+  --color-dourado: #B88B44;
+
+  --color-pago: #A7B88F;
+  --color-em-pagamento: #E6C579;
+  --color-atrasado: #D98F86;
+
+  --font-titulo: 'Playfair Display', serif;
+  --font-texto: 'Inter', sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-creme text-carvao font-texto;
+  }
+
+  h1, h2, h3 {
+    @apply font-titulo;
+  }
+}
