@@ -1,6 +1,6 @@
 ﻿using Vowly.Api.Enums;
 using Vowly.Api.Models;
-using Vowly.Api.Services;
+using Vowly.Api.Services.Assinaturas;
 
 namespace Vowly.Api.Tests;
 

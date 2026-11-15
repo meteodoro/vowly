@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Vowly.Api.Dtos;
+﻿using Microsoft.AspNetCore.Mvc;
+using Vowly.Api.Dtos.Compromissos;
 using Vowly.Api.Enums;
-using Vowly.Api.Services;
+using Vowly.Api.Services.Compromissos;
 
 namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/compromissos")]
-public class CompromissosController(ICompromissoService compromissoService) : CasalControllerBase
+public class CompromissoController(ICompromissoService compromissoService) : CasalControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Listar([FromQuery] StatusCompromisso? status)
@@ -23,7 +22,7 @@ public class CompromissosController(ICompromissoService compromissoService) : Ca
         var r = await compromissoService.ObterAsync(UsuarioId, id);
         return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
     }
-    
+
     [HttpGet("lembretes")]
     public async Task<IActionResult> Lembretes()
     {
@@ -32,18 +31,18 @@ public class CompromissosController(ICompromissoService compromissoService) : Ca
     }
 
     [HttpPost]
-    public async Task<IActionResult> Criar(SalvarCompromissoDto dto)
+    public async Task<IActionResult> Criar(CriarCompromissoRequest request)
     {
-        var r = await compromissoService.CriarAsync(UsuarioId, dto);
+        var r = await compromissoService.CriarAsync(UsuarioId, request);
         return r.Sucesso
             ? CreatedAtAction(nameof(Obter), new { id = r.Valor!.Id }, r.Valor)
             : Erro(r.Erro, r.Mensagem);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Atualizar(int id, SalvarCompromissoDto dto)
+    public async Task<IActionResult> Atualizar(int id, AtualizarCompromissoRequest request)
     {
-        var r = await compromissoService.AtualizarAsync(UsuarioId, id, dto);
+        var r = await compromissoService.AtualizarAsync(UsuarioId, id, request);
         return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
     }
 

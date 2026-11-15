@@ -10,6 +10,21 @@ using Vowly.Api.Dtos;
 using Vowly.Api.Middleware;
 using Vowly.Api.Models;
 using Vowly.Api.Services;
+using Vowly.Api.Repositories.Casamentos;
+using Vowly.Api.Repositories.Comum;
+using Vowly.Api.Services.Casamentos;
+using Vowly.Api.Repositories.Categorias;
+using Vowly.Api.Services.Categorias;
+using Vowly.Api.Repositories.Assinaturas;
+using Vowly.Api.Repositories.Despesas;
+using Vowly.Api.Repositories.Fornecedores;
+using Vowly.Api.Services.Despesas;
+using Vowly.Api.Repositories.Parcelas;
+using Vowly.Api.Services.Parcelas;
+using Vowly.Api.Repositories.Compromissos;
+using Vowly.Api.Services.Compromissos;
+using Vowly.Api.Repositories.Cobrancas;
+using Vowly.Api.Services.Assinaturas;
 
 namespace Vowly.Api;
 
@@ -59,7 +74,18 @@ public class Program
         builder.Services.Configure<OpcoesPlano>(builder.Configuration.GetSection(OpcoesPlano.Secao));
         builder.Services.Configure<OpcoesEmpresa>(builder.Configuration.GetSection(OpcoesEmpresa.Secao));
 
+        // Repositórios
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        builder.Services.AddScoped<ICasamentoRepository, CasamentoRepository>();
+        builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+        builder.Services.AddScoped<IDespesaRepository, DespesaRepository>();
+        builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+        builder.Services.AddScoped<IAssinaturaRepository, AssinaturaRepository>();
+        builder.Services.AddScoped<IParcelaRepository, ParcelaRepository>();
+        builder.Services.AddScoped<ICompromissoRepository, CompromissoRepository>();
+        builder.Services.AddScoped<ICobrancaRepository, CobrancaRepository>();
 
+        // Services
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<ICasamentoService, CasamentoService>();
         builder.Services.AddScoped<ICategoriaService, CategoriaService>();
@@ -69,22 +95,17 @@ public class Program
         builder.Services.AddScoped<IResumoFinanceiroService, ResumoFinanceiroService>();
         builder.Services.AddScoped<ICompromissoService, CompromissoService>();
         builder.Services.AddScoped<IRelatorioEmpresaService, RelatorioEmpresaService>();
-        
+
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddProblemDetails();
-        
 
-        builder.Services.AddControllers()
-            .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
-                new JsonStringEnumConverter(allowIntegerValues: false)));    
-        
         builder.Services.AddControllers()
             .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
                 new JsonStringEnumConverter(allowIntegerValues: false)))
             .ConfigureApiBehaviorOptions(o =>
                 o.InvalidModelStateResponseFactory = contexto =>
                     new BadRequestObjectResult(ErrosDeValidacao.Montar(contexto.ModelState)));
-        
+
         builder.Services.AddOpenApi();
 
         var app = builder.Build();

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using Vowly.Api.Enums;
-using Vowly.Api.Services;
+using Vowly.Api.Services.Compromissos;
 
 namespace Vowly.Api.Tests;
 

@@ -1,6 +1,5 @@
 ﻿using Vowly.Api.Enums;
-using Vowly.Api.Services;
-
+using Vowly.Api.Services.Parcelas;
 namespace Vowly.Api.Tests;
 
 public class ParcelaRegrasTests

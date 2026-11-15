@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Vowly.Api.Dtos;
-using Vowly.Api.Services;
+using Vowly.Api.Dtos.Categorias;
+using Vowly.Api.Services.Categorias;
 
 namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/categorias")]
-public class CategoriasController(ICategoriaService categoriaService) : CasalControllerBase
+public class CategoriaController(ICategoriaService categoriaService) : CasalControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Listar()
@@ -16,16 +16,16 @@ public class CategoriasController(ICategoriaService categoriaService) : CasalCon
     }
 
     [HttpPost]
-    public async Task<IActionResult> Criar(SalvarCategoriaDto dto)
+    public async Task<IActionResult> Criar(CriarCategoriaRequest request)
     {
-        var r = await categoriaService.CriarAsync(UsuarioId, dto);
+        var r = await categoriaService.CriarAsync(UsuarioId, request);
         return r.Sucesso ? StatusCode(StatusCodes.Status201Created, r.Valor) : Erro(r.Erro, r.Mensagem);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Atualizar(int id, SalvarCategoriaDto dto)
+    public async Task<IActionResult> Atualizar(int id, AtualizarCategoriaRequest request)
     {
-        var r = await categoriaService.AtualizarAsync(UsuarioId, id, dto);
+        var r = await categoriaService.AtualizarAsync(UsuarioId, id, request);
         return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
     }
 

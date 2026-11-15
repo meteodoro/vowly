@@ -24,14 +24,25 @@ public class AuthController(UserManager<Usuario> userManager, ITokenService toke
         var resultado = await userManager.CreateAsync(usuario, dto.Senha);
 
         if (!resultado.Succeeded)
-            return BadRequest(resultado.Errors.Select(e => e.Description));
+        {
+            var emailEmUso = resultado.Errors.Any(e => e.Code is "DuplicateUserName" or "DuplicateEmail");
+
+            var mensagem = emailEmUso
+                ? "Este e-mail já está cadastrado."
+                : string.Join(" ", resultado.Errors.Select(e => e.Description));
+
+            return BadRequest(new ErroRespostaDto { Mensagem = mensagem });
+        }
 
         var perfilResultado = await userManager.AddToRoleAsync(usuario, Perfis.Casal);
         if (!perfilResultado.Succeeded)
         {
             // Não deixa um usuário sem perfil no banco
             await userManager.DeleteAsync(usuario);
-            return StatusCode(500, new { mensagem = "Não foi possível concluir o cadastro. Tente novamente." });
+            return StatusCode(500, new ErroRespostaDto
+            {
+                Mensagem = "Não foi possível concluir o cadastro. Tente novamente."
+            });
         }
 
         return Ok(tokenService.GerarToken(usuario, [Perfis.Casal]));

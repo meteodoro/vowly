@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Vowly.Api.Dtos;
-using Vowly.Api.Services;
+using Vowly.Api.Dtos.Casamentos;
+using Vowly.Api.Services.Casamentos;
 
 namespace Vowly.Api.Controllers;
 
@@ -11,33 +11,21 @@ public class CasamentoController(ICasamentoService casamentoService) : CasalCont
     [HttpGet]
     public async Task<IActionResult> Obter()
     {
-        var casamento = await casamentoService.ObterAsync(UsuarioId);
-
-        if (casamento is null)
-            return NotFound(new { mensagem = "Você ainda não cadastrou um casamento." });
-
-        return Ok(casamento);
+        var r = await casamentoService.ObterAsync(UsuarioId);
+        return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Criar(SalvarCasamentoDto dto)
+    public async Task<IActionResult> Criar(CriarCasamentoRequest request)
     {
-        var casamento = await casamentoService.CriarAsync(UsuarioId, dto);
-
-        if (casamento is null)
-            return Conflict(new { mensagem = "Você já tem um casamento cadastrado. Use a edição." });
-
-        return CreatedAtAction(nameof(Obter), casamento);
+        var r = await casamentoService.CriarAsync(UsuarioId, request);
+        return r.Sucesso ? CreatedAtAction(nameof(Obter), r.Valor) : Erro(r.Erro, r.Mensagem);
     }
 
     [HttpPut]
-    public async Task<IActionResult> Atualizar(SalvarCasamentoDto dto)
+    public async Task<IActionResult> Atualizar(AtualizarCasamentoRequest request)
     {
-        var casamento = await casamentoService.AtualizarAsync(UsuarioId, dto);
-
-        if (casamento is null)
-            return NotFound(new { mensagem = "Você ainda não cadastrou um casamento." });
-
-        return Ok(casamento);
+        var r = await casamentoService.AtualizarAsync(UsuarioId, request);
+        return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
     }
 }

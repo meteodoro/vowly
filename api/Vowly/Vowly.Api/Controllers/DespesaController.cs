@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Vowly.Api.Dtos;
+using Vowly.Api.Dtos.Despesas;
 using Vowly.Api.Enums;
-using Vowly.Api.Services;
+using Vowly.Api.Services.Despesas;
 
 namespace Vowly.Api.Controllers;
 
 [ApiController]
 [Route("api/despesas")]
-public class DespesasController(IDespesaService despesaService) : CasalControllerBase
+public class DespesaController(IDespesaService despesaService) : CasalControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Listar([FromQuery] int? categoriaId, [FromQuery] StatusDespesa? status)
@@ -24,18 +24,18 @@ public class DespesasController(IDespesaService despesaService) : CasalControlle
     }
 
     [HttpPost]
-    public async Task<IActionResult> Criar(SalvarDespesaDto dto)
+    public async Task<IActionResult> Criar(CriarDespesaRequest request)
     {
-        var r = await despesaService.CriarAsync(UsuarioId, dto);
+        var r = await despesaService.CriarAsync(UsuarioId, request);
         return r.Sucesso
             ? CreatedAtAction(nameof(Obter), new { id = r.Valor!.Id }, r.Valor)
             : Erro(r.Erro, r.Mensagem);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Atualizar(int id, SalvarDespesaDto dto)
+    public async Task<IActionResult> Atualizar(int id, AtualizarDespesaRequest request)
     {
-        var r = await despesaService.AtualizarAsync(UsuarioId, id, dto);
+        var r = await despesaService.AtualizarAsync(UsuarioId, id, request);
         return r.Sucesso ? Ok(r.Valor) : Erro(r.Erro, r.Mensagem);
     }
 

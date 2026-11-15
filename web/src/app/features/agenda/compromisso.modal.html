@@ -1,0 +1,75 @@
+﻿<div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-carvao/40 p-4 backdrop-blur-[2px]" (click)="cancelar.emit()">
+
+  <div
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-compromisso"
+    (click)="$event.stopPropagation()"
+    class="animate-aparecer motion-reduce:animate-none w-full max-w-md rounded-2xl bg-creme p-6 shadow-[0_30px_80px_-20px_rgba(74,71,68,0.45)] sm:p-8"
+  >
+    <div class="flex items-center justify-between">
+      <h2 id="titulo-compromisso" class="font-titulo text-2xl text-carvao">{{ editando ? 'Editar compromisso' : 'Novo compromisso' }}</h2>
+      <button type="button" (click)="cancelar.emit()" aria-label="Fechar" class="grid h-8 w-8 place-items-center rounded-full text-carvao/70 transition hover:bg-areia hover:text-carvao">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <form (submit)="enviar($event)" class="mt-6 space-y-4" novalidate>
+
+      <label class="block text-sm text-carvao/80">
+        Título
+        <input #campoTitulo type="text" maxlength="100" placeholder="Ex.: Prova do vestido"
+               [value]="titulo()" (input)="titulo.set(valor($event))"
+               class="mt-1.5 w-full rounded-xl border border-bege/70 bg-white/50 px-4 py-3 text-[15px] text-carvao outline-none focus:ring-2 focus:ring-dourado/20" />
+      </label>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block text-sm text-carvao/80">
+          Data
+          <input type="date" [value]="data()" (input)="data.set(valor($event))"
+                 class="mt-1.5 w-full rounded-xl border border-bege/70 bg-white/50 px-4 py-3 text-[15px] text-carvao outline-none focus:ring-2 focus:ring-dourado/20" />
+        </label>
+
+        <label class="block text-sm text-carvao/80">
+          Hora <span class="text-carvao/50">(opcional)</span>
+          <input type="time" [value]="hora()" (input)="hora.set(valor($event))"
+                 class="mt-1.5 w-full rounded-xl border border-bege/70 bg-white/50 px-4 py-3 text-[15px] text-carvao outline-none focus:ring-2 focus:ring-dourado/20" />
+        </label>
+      </div>
+
+      <label class="block text-sm text-carvao/80">
+        Local <span class="text-carvao/50">(opcional)</span>
+        <input type="text" maxlength="100" placeholder="Ex.: Atelier Noivas"
+               [value]="local()" (input)="local.set(valor($event))"
+               class="mt-1.5 w-full rounded-xl border border-bege/70 bg-white/50 px-4 py-3 text-[15px] text-carvao outline-none focus:ring-2 focus:ring-dourado/20" />
+      </label>
+
+      @if (erroLocal() ?? erro) {
+        <p class="text-sm text-atrasado" role="alert">{{ erroLocal() ?? erro }}</p>
+      }
+
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <div>
+          @if (editando) {
+            <button type="button" (click)="pedirExclusao()" [disabled]="salvando"
+                    [class]="confirmandoExclusao() ? 'bg-[#D98F86] text-white hover:opacity-90' : 'text-[#A8564C] hover:bg-[#D98F86]/15'"
+                    class="rounded-full px-4 py-3 text-[15px] transition disabled:opacity-50">
+              {{ confirmandoExclusao() ? 'Confirmar exclusão' : 'Excluir' }}
+            </button>
+          }
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button type="button" (click)="cancelar.emit()" [disabled]="salvando"
+                  class="rounded-full border border-bege px-6 py-3 text-[15px] text-carvao transition hover:bg-areia disabled:opacity-50">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="salvando"
+                  class="rounded-full bg-dourado px-8 py-3 text-[15px] font-medium text-white shadow-[0_10px_25px_-10px_rgba(187,139,68,0.8)] transition hover:opacity-90 focus:outline-none focus-visible:ring-4 focus-visible:ring-dourado/30 disabled:opacity-50">
+            {{ salvando ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -21,13 +21,13 @@ Content-Type: application/json
 POST http://localhost:5266/api/auth/registrar
 Content-Type: application/json
 
-{ "nome": "João", "email": "joao@teste.com", "senha": "senha1234" }
+{ "nome": "Bruno", "email": "brunoo@teste.com", "senha": "senha1234" }
 
 ### Login B
 POST http://localhost:5266/api/auth/login
 Content-Type: application/json
 
-{ "email": "joao@teste.com", "senha": "senha1234" }
+{ "email": "brunoo@teste.com", "senha": "senha1234" }
 
 > {%
     client.global.set("token2", response.body.token);
@@ -35,7 +35,7 @@ Content-Type: application/json
 
 ### Criar casamento
 POST http://localhost:5266/api/casamento
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token2}}
 Content-Type: application/json
 
 {
@@ -148,11 +148,11 @@ Content-Type: application/json
 
 ### Situação do plano
 GET http://localhost:5266/api/assinatura
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token2}}
 
 ### Assinar
 POST http://localhost:5266/api/assinatura/assinar
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token2}}
 
 ### Cancelar
 POST http://localhost:5266/api/assinatura/cancelar
@@ -184,8 +184,8 @@ Content-Type: application/json
 {
   "titulo": "Degustação do buffet",
   "tipo": "Degustação",
-  "dataHora": "2026-10-20T14:00:00Z",
-  "status": "Concluido"
+  "dataHora": "2026-10-10T14:00:00Z",
+  "status": "Pendente"
 }
 
 ### Listar compromissos (opcionalmente ?status=Pendente)
@@ -193,11 +193,11 @@ GET http://localhost:5266/api/compromissos?status=Pendente
 Authorization: Bearer {{token}}
 
 ### Buscar compromisso por Id
-GET http://localhost:5266/api/compromissos/2
+GET http://localhost:5266/api/compromissos/4
 Authorization: Bearer {{token}}
 
 ### Excluir compromisso
-DELETE http://localhost:5266/api/compromissos/2
+DELETE http://localhost:5266/api/compromissos/4
 Authorization: Bearer {{token}}
 
 ### Lembretes

@@ -1,4 +1,6 @@
-﻿namespace Vowly.Api.Services;
+﻿using Vowly.Api.Services.Assinaturas;
+
+namespace Vowly.Api.Services;
 
 public class OpcoesPlano
 {
