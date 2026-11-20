@@ -1,4 +1,4 @@
-@host = http://localhost:5266
+@host = http://localhost:5100
 
 ### Registrar usuário
 POST {{host}}/api/auth/registrar
@@ -10,8 +10,8 @@ Content-Type: application/json
 POST {{host}}/api/auth/login
 Content-Type: application/json
 
-{ "email": "maria@teste.com", "senha": "senha1234"
-}
+{ "email": "{{mariaEmail}}", "senha": "{{mariaSenha}}" }
+
 
 > {%
     client.global.set("token", response.body.token);
@@ -210,7 +210,7 @@ Authorization: Bearer {{token}}
 POST http://localhost:5266/api/auth/login
 Content-Type: application/json
 
-{ "email": "maria@teste.com", "senha": "senha1234" }
+{ "email": "{{mariaEmail}}", "senha": "{{mariaSenha}}" }
 
 > {%
     client.global.set("token", response.body.token);
@@ -220,7 +220,7 @@ Content-Type: application/json
 POST http://localhost:5266/api/auth/login
 Content-Type: application/json
 
-{ "email": "admin@vowly.com", "senha": "admin54321" }
+{ "email": "{{adminEmail}}", "senha": "{{adminSenha}}" }
 
 > {%
     client.global.set("tokenAdmin", response.body.token);

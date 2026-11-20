@@ -1,0 +1,253 @@
+@host = http://localhost:5100
+
+# ============================================================================
+# 0. LOGINS
+# ============================================================================
+
+### 0.1 Login da Maria (Casal)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "{{mariaEmail}}", "senha": "{{mariaSenha}}" }
+
+> {%
+    client.test("Login retorna 200", function () {
+        client.assert(response.status === 200, "Status: " + response.status);
+    });
+    client.global.set("tokenMaria", response.body.token);
+%}
+
+### 0.2 Login do Admin
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "{{adminEmail}}", "senha": "{{adminSenha}}" }
+
+> {%
+    client.test("Login retorna 200", function () {
+        client.assert(response.status === 200, "Status: " + response.status);
+    });
+    client.global.set("tokenAdmin", response.body.token);
+%}
+
+### 1.1 Guardar o id de uma categoria
+GET {{host}}/api/categorias
+Authorization: Bearer {{tokenMaria}}
+
+> {%
+    client.test("Retorna 200 com categorias", function () {
+        client.assert(response.status === 200, "Status: " + response.status);
+        client.assert(response.body.length >= 1, "Sem categorias: cadastre o casamento da Maria antes");
+    });
+    client.global.set("categoriaId", response.body[0].id);
+    client.global.set("categoriaNome", response.body[0].nome);
+%}
+
+
+### 2.1 Despesa sem descrição e com valor zero
+POST {{host}}/api/despesas
+Authorization: Bearer {{tokenMaria}}
+Content-Type: application/json
+
+{ "valorTotal": 0, "categoriaId": {{categoriaId}} }
+
+> {%
+    client.test("400 com mensagem geral e um erro por campo, em português", function () {
+        client.assert(response.status === 400, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Verifique os campos informados.", "Mensagem: " + response.body.mensagem);
+        client.assert(response.body.erros.descricao[0] === "O campo descricao é obrigatório.",
+            "descricao: " + JSON.stringify(response.body.erros.descricao));
+        client.assert(response.body.erros.valorTotal[0] === "O valor deve ser maior que zero.",
+            "valorTotal: " + JSON.stringify(response.body.erros.valorTotal));
+    });
+%}
+
+### 2.2 Compromisso sem data e hora (campo obrigatório ausente no JSON)
+POST {{host}}/api/compromissos
+Authorization: Bearer {{tokenMaria}}
+Content-Type: application/json
+
+{ "titulo": "Sem data", "tipo": "Prova" }
+
+> {%
+    client.test("400 com a mensagem de corpo incompleto", function () {
+        client.assert(response.status === 400, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Verifique os campos informados.", "Mensagem: " + response.body.mensagem);
+        const mensagens = Object.values(response.body.erros).flat();
+        client.assert(mensagens.includes("O corpo da requisição está incompleto ou em formato inválido."),
+            "Mensagens: " + JSON.stringify(response.body.erros));
+    });
+%}
+
+### 2.3 Texto grande demais (limite de caracteres)
+POST {{host}}/api/categorias
+Authorization: Bearer {{tokenMaria}}
+Content-Type: application/json
+
+{ "nome": "Este nome de categoria é propositalmente longo demais para passar do limite de cinquenta caracteres" }
+
+> {%
+    client.test("400 com a mensagem de tamanho máximo em português", function () {
+        client.assert(response.status === 400, "Status: " + response.status);
+        client.assert(response.body.erros.nome[0] === "O campo nome deve ter no máximo 50 caracteres.",
+            "nome: " + JSON.stringify(response.body.erros.nome));
+    });
+%}
+
+### 3.1 Texto em um campo numérico
+POST {{host}}/api/despesas
+Authorization: Bearer {{tokenMaria}}
+Content-Type: application/json
+
+{ "descricao": "Teste", "valorTotal": "abc", "categoriaId": {{categoriaId}} }
+
+> {%
+    client.test("400 com o erro apontando valorTotal", function () {
+        client.assert(response.status === 400, "Status: " + response.status);
+        client.assert(response.body.erros.valorTotal !== undefined, "Chaves: " + Object.keys(response.body.erros));
+    });
+%}
+
+### 3.2 JSON quebrado (falta uma vírgula)
+POST {{host}}/api/despesas
+Authorization: Bearer {{tokenMaria}}
+Content-Type: application/json
+
+{ "descricao": "Teste", "valorTotal": 100 }
+
+> {%
+    client.test("400 com formato padronizado e mensagem genérica (a chave esperada é corpo)", function () {
+        client.assert(response.status === 400, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Verifique os campos informados.", "Mensagem: " + response.body.mensagem);
+        const mensagens = Object.values(response.body.erros).flat();
+        client.assert(mensagens.includes("O corpo da requisição está incompleto ou em formato inválido."),
+            "Erros: " + JSON.stringify(response.body.erros));
+    });
+%}
+
+### 3.3 Corpo vazio
+POST {{host}}/api/despesas
+Authorization: Bearer {{tokenMaria}}
+Content-Type: application/json
+
+> {%
+    client.test("400 com a mensagem de corpo obrigatório", function () {
+        client.assert(response.status === 400, "Status: " + response.status);
+        const mensagens = Object.values(response.body.erros).flat();
+        client.assert(mensagens.includes("O corpo da requisição é obrigatório."),
+            "Erros: " + JSON.stringify(response.body.erros));
+    });
+%}
+
+### 4.1 Sem token (401)
+GET {{host}}/api/casamento
+
+> {%
+    client.test("401 com mensagem em JSON", function () {
+        client.assert(response.status === 401, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Você precisa entrar para acessar este recurso.",
+            "Corpo: " + JSON.stringify(response.body));
+    });
+%}
+
+### 4.2 Admin em rota do casal (403)
+GET {{host}}/api/casamento
+Authorization: Bearer {{tokenAdmin}}
+
+> {%
+    client.test("403 com mensagem em JSON", function () {
+        client.assert(response.status === 403, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Você não tem permissão para acessar este recurso.",
+            "Corpo: " + JSON.stringify(response.body));
+    });
+%}
+
+### 4.3 Rota que não existe (404)
+GET {{host}}/api/xyz
+Authorization: Bearer {{tokenMaria}}
+
+> {%
+    client.test("404 com a mensagem de rota", function () {
+        client.assert(response.status === 404, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Rota não encontrada.", "Corpo: " + JSON.stringify(response.body));
+    });
+%}
+
+### 4.4 Método não permitido (405)
+DELETE {{host}}/api/casamento
+Authorization: Bearer {{tokenMaria}}
+
+> {%
+    client.test("405 com mensagem em JSON", function () {
+        client.assert(response.status === 405, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Método HTTP não permitido para esta rota.",
+            "Corpo: " + JSON.stringify(response.body));
+    });
+%}
+
+### 5.1 Nome de categoria repetido (409)
+POST {{host}}/api/categorias
+Authorization: Bearer {{tokenMaria}}
+Content-Type: application/json
+
+{ "nome": "{{categoriaNome}}" }
+
+> {%
+    client.test("409 com a mensagem da regra, sem o campo erros", function () {
+        client.assert(response.status === 409, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Já existe uma categoria com esse nome.", "Mensagem: " + response.body.mensagem);
+        client.assert(response.body.erros === undefined, "Não deveria ter erros por campo");
+    });
+%}
+
+### 5.2 Despesa que não existe (404)
+GET {{host}}/api/despesas/999999
+Authorization: Bearer {{tokenMaria}}
+
+> {%
+    client.test("404 com a mensagem da regra (diferente da de rota)", function () {
+        client.assert(response.status === 404, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Despesa não encontrada.", "Mensagem: " + response.body.mensagem);
+    });
+%}
+
+### 5.3 Categoria de outro casamento (400 de regra)
+POST {{host}}/api/despesas
+Authorization: Bearer {{tokenMaria}}
+Content-Type: application/json
+
+{ "descricao": "Teste", "valorTotal": 100, "categoriaId": 999999 }
+
+> {%
+    client.test("400 com a mensagem da regra", function () {
+        client.assert(response.status === 400, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Categoria inválida.", "Mensagem: " + response.body.mensagem);
+    });
+%}
+
+
+### 8.1 Consulta com o banco parado
+GET {{host}}/api/casamento
+Authorization: Bearer {{tokenMaria}}
+
+> {%
+    client.test("503 com a mensagem do banco (se falhar, o banco está no ar: pare o container)", function () {
+        client.assert(response.status === 503, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Não foi possível acessar o banco de dados agora. Tente novamente em instantes.",
+            "Mensagem: " + response.body.mensagem);
+        client.assert(response.body.pilha === undefined && response.body.stackTrace === undefined, "Vazou a pilha");
+    });
+%}
+
+
+### 9.1 Exceção não tratada
+GET {{host}}/api/compromissos
+Authorization: Bearer {{tokenMaria}}
+
+> {%
+    client.test("500 com mensagem genérica e detalhe só em Desenvolvimento (se falhar, falta o throw de teste)", function () {
+        client.assert(response.status === 500, "Status: " + response.status);
+        client.assert(response.body.mensagem === "Ocorreu um erro inesperado. Tente novamente.", "Mensagem: " + response.body.mensagem);
+        client.assert(response.body.detalhe === "teste", "Detalhe (só em Desenvolvimento): " + response.body.detalhe);
+    });
+%}

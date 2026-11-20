@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vowly.Api", "Vowly.Api\Vowl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vowly.Api.Tests", "Vowly.Api.Tests\Vowly.Api.Tests.csproj", "{2569B430-8260-47F2-AD5D-DBC006CEA473}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vowly.Gateway", "Vowly.Gateway\Vowly.Gateway.csproj", "{00396C96-6994-4500-AE68-0CB00CCA6C71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,18 @@ Global
 		{2569B430-8260-47F2-AD5D-DBC006CEA473}.Release|x64.Build.0 = Release|Any CPU
 		{2569B430-8260-47F2-AD5D-DBC006CEA473}.Release|x86.ActiveCfg = Release|Any CPU
 		{2569B430-8260-47F2-AD5D-DBC006CEA473}.Release|x86.Build.0 = Release|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Debug|x64.Build.0 = Debug|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Debug|x86.Build.0 = Debug|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Release|x64.ActiveCfg = Release|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Release|x64.Build.0 = Release|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Release|x86.ActiveCfg = Release|Any CPU
+		{00396C96-6994-4500-AE68-0CB00CCA6C71}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
