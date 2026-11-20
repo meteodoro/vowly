@@ -13,6 +13,8 @@ public abstract class VowlyControllerBase : ControllerBase
     {
         TipoErro.NaoEncontrado => NotFound(new { mensagem }),
         TipoErro.Conflito => Conflict(new { mensagem }),
+        TipoErro.NaoAutorizado => Unauthorized(new { mensagem }),
+        TipoErro.ErroInterno => StatusCode(StatusCodes.Status500InternalServerError, new { mensagem }),
         _ => BadRequest(new { mensagem })
     };
 }

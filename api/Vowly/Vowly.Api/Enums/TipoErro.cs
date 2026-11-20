@@ -4,5 +4,7 @@ public enum TipoErro
 {
     NaoEncontrado,
     Conflito,
-    Invalido
+    Invalido,
+    NaoAutorizado,
+    ErroInterno
 }

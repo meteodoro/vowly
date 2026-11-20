@@ -9,6 +9,7 @@ using Vowly.Api.Repositories.Comum;
 using Vowly.Api.Repositories.Despesas;
 using Vowly.Api.Repositories.Fornecedores;
 using Vowly.Api.Services.Assinaturas;
+using Vowly.Api.Services.Comum;
 
 namespace Vowly.Api.Services.Despesas;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Npgsql;
-using Vowly.Api.Dtos;
+using Vowly.Api.Dtos.Comum;
 
 namespace Vowly.Api.Middleware;
 
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler(
             contexto.Request.Method, contexto.Request.Path);
 
         contexto.Response.StatusCode = status;
-        await contexto.Response.WriteAsJsonAsync(new ErroRespostaDto
+        await contexto.Response.WriteAsJsonAsync(new ErroResponse()
         {
             Mensagem = mensagem,
             Detalhe = ambiente.IsDevelopment() ? excecao.Message : null

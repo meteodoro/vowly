@@ -1,4 +1,5 @@
 ﻿using Vowly.Api.Enums;
+using Vowly.Api.Services.Comum;
 
 namespace Vowly.Api.Services.Compromissos;
 

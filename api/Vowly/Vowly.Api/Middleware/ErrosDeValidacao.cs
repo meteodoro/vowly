@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Vowly.Api.Dtos;
+using Vowly.Api.Dtos.Comum;
 
 namespace Vowly.Api.Middleware;
 
@@ -27,7 +27,7 @@ public static class ErrosDeValidacao
             "O corpo da requisição é obrigatório.")
     ];
 
-    public static ErroRespostaDto Montar(ModelStateDictionary modelState)
+    public static ErroResponse Montar(ModelStateDictionary modelState)
     {
         var erros = new Dictionary<string, string[]>();
 
@@ -42,7 +42,7 @@ public static class ErrosDeValidacao
                 .ToArray();
         }
 
-        return new ErroRespostaDto { Mensagem = MensagemGeral, Erros = erros };
+        return new ErroResponse { Mensagem = MensagemGeral, Erros = erros };
     }
 
     public static string Traduzir(string chave, string mensagem)

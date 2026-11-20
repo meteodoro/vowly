@@ -5,15 +5,15 @@ using Vowly.Api.Models;
 
 namespace Vowly.Api.Repositories.Despesas;
 
+// Dados mínimos de cada despesa para o resumo financeiro (consulta só de leitura)
+public record DespesaResumo(decimal ValorTotal, bool Paga, bool TemParcelas, decimal ValorParcelasPagas);
+
 public interface IDespesaRepository
 {
-    // Com categoria e parcelas carregadas
     Task<List<Despesa>> ListarPorCasamentoAsync(int casamentoId, int? categoriaId, StatusDespesa? status);
     Task<Despesa?> ObterDetalhadaAsync(int casamentoId, int id);
     Task<bool> ExistePorCasamentoAsync(int casamentoId, int id);
-
-
-    // Sem categoria nem parcelas, rastreada: serve para editar e excluir
+    Task<List<DespesaResumo>> ListarResumosPorCasamentoAsync(int casamentoId);
     Task<Despesa?> ObterPorCasamentoAsync(int casamentoId, int id);
     Task<int> ContarPorCasamentoAsync(int casamentoId);
     Task<int> ContarPorUsuarioAsync(string usuarioId);
@@ -52,7 +52,17 @@ public class DespesaRepository(AppDbContext context) : IDespesaRepository
     public Task<bool> ExistePorCasamentoAsync(int casamentoId, int id) =>
         context.Despesas.AnyAsync(d => d.Id == id && d.CasamentoId == casamentoId);
     
-    // Filtra pelo casamento, então nunca devolve uma despesa de outro usuário
+    public Task<List<DespesaResumo>> ListarResumosPorCasamentoAsync(int casamentoId) =>
+        context.Despesas
+            .AsNoTracking()
+            .Where(d => d.CasamentoId == casamentoId)
+            .Select(d => new DespesaResumo(
+                d.ValorTotal,
+                d.Status == StatusDespesa.Paga,
+                d.Parcelas.Any(),
+                d.Parcelas.Where(p => p.Paga).Sum(p => p.Valor)))
+            .ToListAsync();
+    
     public Task<Despesa?> ObterPorCasamentoAsync(int casamentoId, int id) =>
         context.Despesas.FirstOrDefaultAsync(d => d.Id == id && d.CasamentoId == casamentoId);
 

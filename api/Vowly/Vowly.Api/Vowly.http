@@ -235,21 +235,21 @@ GET http://localhost:5266/api/despesas
 Authorization: Bearer {{tokenAdmin}}
 
 ### Admin na rota do Admin
-GET http://localhost:5266/api/admin/relatorio/teste
+GET http://localhost:5266/api/admin/relatorio/
 Authorization: Bearer {{tokenAdmin}}
 
 ### Casal na rota do Admin
-GET http://localhost:5266/api/admin/relatorio/teste
+GET http://localhost:5266/api/admin/relatorio/
 Authorization: Bearer {{token}}
 
 ### Sem login na rota do Admin
-GET http://localhost:5266/api/admin/relatorio/teste
+GET http://localhost:5266/api/admin/relatorio/
 
 ### Tentar se registrar como Admin
 POST http://localhost:5266/api/auth/registrar
 Content-Type: application/json
 
-{ "nome": "Teste", "email": "teste@teste.com", "senha": "SenhaTeste123", "perfil": "Admin" }
+{ "nome": "Teste", "email": "teste@testee.com", "senha": "SenhaTeste123", "perfil": "Admin" }
 
 ### Relatório da empresa
 GET http://localhost:5266/api/admin/relatorio?meses=3

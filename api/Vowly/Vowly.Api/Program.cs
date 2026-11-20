@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Vowly.Api.Data;
-using Vowly.Api.Dtos;
+using Vowly.Api.Dtos.Comum;
 using Vowly.Api.Middleware;
 using Vowly.Api.Models;
 using Vowly.Api.Services;
@@ -25,6 +25,10 @@ using Vowly.Api.Repositories.Compromissos;
 using Vowly.Api.Services.Compromissos;
 using Vowly.Api.Repositories.Cobrancas;
 using Vowly.Api.Services.Assinaturas;
+using Vowly.Api.Services.Dashboard;
+using Vowly.Api.Services.Relatorios;
+using Vowly.Api.Services.Auth;
+using Vowly.Api.Services.Comum;
 
 namespace Vowly.Api;
 
@@ -87,6 +91,7 @@ public class Program
 
         // Services
         builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<ICasamentoService, CasamentoService>();
         builder.Services.AddScoped<ICategoriaService, CategoriaService>();
         builder.Services.AddScoped<IDespesaService, DespesaService>();
@@ -128,7 +133,7 @@ public class Program
                 _ => "Não foi possível processar a requisição."
             };
 
-            await resposta.WriteAsJsonAsync(new ErroRespostaDto { Mensagem = mensagem });
+            await resposta.WriteAsJsonAsync(new ErroResponse() { Mensagem = mensagem });
         });
 
         if (app.Environment.IsDevelopment())

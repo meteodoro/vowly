@@ -1,5 +1,6 @@
 ﻿using Vowly.Api.Enums;
-using Vowly.Api.Services;
+using Vowly.Api.Repositories.Despesas;
+using Vowly.Api.Services.Dashboard;
 
 namespace Vowly.Api.Tests;
 

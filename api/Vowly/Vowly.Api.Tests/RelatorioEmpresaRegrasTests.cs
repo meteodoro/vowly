@@ -1,4 +1,4 @@
-﻿using Vowly.Api.Services;
+﻿using Vowly.Api.Services.Relatorios;
 
 namespace Vowly.Api.Tests;
 

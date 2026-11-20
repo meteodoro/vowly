@@ -5,6 +5,7 @@ using Vowly.Api.Repositories.Casamentos;
 using Vowly.Api.Repositories.Comum;
 using Vowly.Api.Repositories.Despesas;
 using Vowly.Api.Repositories.Parcelas;
+using Vowly.Api.Services.Comum;
 
 namespace Vowly.Api.Services.Parcelas;
 

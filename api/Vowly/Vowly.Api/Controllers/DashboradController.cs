@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Vowly.Api.Services;
+using Vowly.Api.Services.Dashboard;
 
 namespace Vowly.Api.Controllers;
 

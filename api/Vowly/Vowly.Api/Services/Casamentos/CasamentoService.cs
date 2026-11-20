@@ -3,6 +3,7 @@ using Vowly.Api.Enums;
 using Vowly.Api.Models;
 using Vowly.Api.Repositories.Casamentos;
 using Vowly.Api.Repositories.Comum;
+using Vowly.Api.Services.Comum;
 
 namespace Vowly.Api.Services.Casamentos;
 

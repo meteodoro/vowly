@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using Vowly.Api.Services;
+using Vowly.Api.Services.Relatorios;
 
 namespace Vowly.Api.Controllers;
 

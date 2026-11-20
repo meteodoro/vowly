@@ -6,6 +6,7 @@ using Vowly.Api.Repositories.Assinaturas;
 using Vowly.Api.Repositories.Cobrancas;
 using Vowly.Api.Repositories.Comum;
 using Vowly.Api.Repositories.Despesas;
+using Vowly.Api.Services.Comum;
 
 namespace Vowly.Api.Services.Assinaturas;
 

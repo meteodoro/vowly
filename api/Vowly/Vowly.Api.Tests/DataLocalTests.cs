@@ -1,4 +1,5 @@
 ﻿using Vowly.Api.Services;
+using Vowly.Api.Services.Comum;
 
 namespace Vowly.Api.Tests;
 
